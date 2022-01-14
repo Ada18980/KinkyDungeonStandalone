@@ -20,6 +20,7 @@ function init() {
     CharacterLoadCSVDialog(Player);
     ActivityDictionaryLoad();
 
+    Player.AudioSettings = {Volume:1};
     Player.ArousalSettings = {};
     Player.ArousalSettings.VFXFilter = "VFXFilterHeavy";
     Player.OnlineSharedSettings = {};
