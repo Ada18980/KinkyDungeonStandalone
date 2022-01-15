@@ -85,12 +85,12 @@ DrawGetImage = function(Source) {
 }
 
 AudioPlayInstantSound = function(src, volume) {
-	const vol = volume != null ? volume : Player.AudioSettings.Volume;
-	if (vol > 0) {
-		var audio = new Audio();
-        	audio.crossOrigin = "anonymous";
-		audio.src = remap(src);
-		audio.volume = Math.min(vol, 1);
-		audio.play();
-	}
+    const vol = volume != null ? volume : Player.AudioSettings.Volume;
+    if (vol > 0) {
+        var audio = new Audio();
+        audio.crossOrigin = "Anonymous";
+        audio.src = remap(src);
+        audio.volume = Math.min(vol, 1);
+        audio.play();
+    }
 }
