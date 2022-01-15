@@ -53,7 +53,7 @@
             let user = params.has('user') ? params.get('user') : USER;
             let repo = params.has('repo') ? params.get('repo') : REPO;
             let branch = params.has('branch') ? params.get('branch') : BRANCH;
-            let latest = params.has('v') && params.get('v') == 'latest';
+            let latest = true;//params.has('v') && params.get('v') == 'latest';
         
             if (params.has('commit')) {
                 targetCommit = params.get('commit');
