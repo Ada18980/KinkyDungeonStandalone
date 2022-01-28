@@ -41,11 +41,17 @@ function init() {
         Spell1: 49,
         Spell2: 50,
         Spell3: 51,
+        Spell4: 52,
+        Spell5: 53,
         Up: 119,
         UpLeft: 113,
         UpRight: 101,
         Wait: 120,
+        Skip: 13,
     };
+    if (localStorage.getItem("KinkyDungeonKeybindings") && JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"))) {
+        KinkyDungeonKeybindings = JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"));
+    }
 }
 
 // Useful for debugging
