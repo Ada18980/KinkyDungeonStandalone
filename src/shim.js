@@ -33,21 +33,21 @@ function init() {
 
     // Default keybindings, these are initialized as part of the Player
     KinkyDungeonKeybindings = {
-        Down: 115,
-        DownLeft: 122,
-        DownRight: 99,
-        Left: 97,
-        Right: 100,
-        Spell1: 49,
-        Spell2: 50,
-        Spell3: 51,
-        Spell4: 52,
-        Spell5: 53,
-        Up: 119,
-        UpLeft: 113,
-        UpRight: 101,
-        Wait: 120,
-        Skip: 13,
+        Down: "KeyS",
+        DownLeft: "KeyZ",
+        DownRight: "KeyC",
+        Left: "KeyA",
+        Right: "KeyD",
+        Skip: "Space",
+        Spell1: "Digit1",
+        Spell2: "Digit2",
+        Spell3: "Digit3",
+        Spell4: "Digit4",
+        Spell5: "Digit5",
+        Up: "KeyW",
+        UpLeft: "KeyQ",
+        UpRight: "KeyE",
+        Wait: "KeyX",
     };
     if (localStorage.getItem("KinkyDungeonKeybindings") && JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"))) {
         KinkyDungeonKeybindings = JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"));
