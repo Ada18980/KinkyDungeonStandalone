@@ -52,6 +52,7 @@ function init() {
     if (localStorage.getItem("KinkyDungeonKeybindings") && JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"))) {
         KinkyDungeonKeybindings = JSON.parse(localStorage.getItem("KinkyDungeonKeybindings"));
     }
+    GLDrawLoad();
 }
 
 // Useful for debugging
