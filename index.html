@@ -68,12 +68,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             if (params.has('commit')) {
                 targetCommit = params.get('commit');
                 console.log('Using commit: ' + targetCommit);
+		document.title = document.title + ' commit: ' + targetCommit;
             } else if (params.has('user') || params.has('branch') || params.has('repo') || latest) {
                 // Query github API
                 let api_url = `https://api.github.com/repos/${user}/${repo}/commits/${branch}`;
                 try {
                     let res = await query_internal(api_url);
                     targetCommit = JSON.parse(res.responseText)['sha'];
+		    if (params.has('branch'))
+			document.title = document.title + ' - ' + branch;
                     console.log(`Using latest commit from ${user}/${repo} on branch ${branch}: ${targetCommit}`);
                 } catch (e) {
                     console.log(`Failed to query Github API. Send: ${api_url} Response: ${res}`);
