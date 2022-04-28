@@ -1,6 +1,8 @@
-FROM ubuntu 
-RUN apt-get update 
-RUN apt-get -y install apache2
-RUN apt-get -y install apache2-utils
-RUN apt-get clean 
-EXPOSE 80 CMD ["apache2ctl", "-D", "FOREGROUND"]
+FROM nginx:stable
+RUN apt-get -y update
+RUN apt-get -y install git
+WORKDIR /usr/src
+RUN git clone https://github.com/Ada18980/KinkyDungeonStandalone.git /usr/src/html
+COPY ./usr/src/. /usr/share/nginx/html/
+
+EXPOSE 8000
