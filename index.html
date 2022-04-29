@@ -2,132 +2,134 @@
 <html style="width:100%; height:100%; padding:0px; margin:0px;">
 <head>
 
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-536L7P8');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start':
+                new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-536L7P8');</script>
+    <!-- End Google Tag Manager -->
+    <script src="./src/sourceBranch.js"></script>
 
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-	<meta http-equiv="cache-control" content="max-age=0" />
-	<meta http-equiv="cache-control" content="no-cache" />
-	<meta http-equiv="expires" content="0" />
-	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-	<meta http-equiv="pragma" content="no-cache" />
-	<meta charset="UTF-8">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<title>Kinky Dungeon</title>
-	<link rel="icon" type="image/png" href="icon.png" id="favicon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta http-equiv="cache-control" content="max-age=0"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Kinky Dungeon</title>
+    <link rel="icon" type="image/png" href="icon.png" id="favicon">
 
 </head>
 
 <body style="width:100%; height:100%; background-color:black; margin:0px; padding:0px; overflow:hidden;">
 
-    <script>
-        // Strategy:
-        // 1. If commit= is specified, use that commit (using user/repo if specified)
-        // 2. If v=latest, or any of user/repo/branch are specified, query github API for the latest commit from said branch
-        // 3. Use the default commmit (stable) specified here
-        const USER = 'Ada18980';
-        const REPO = 'Bondage-College';
-        const BRANCH = 'master';
-        const COMMIT = '318f6068d2514c7986cfa08afc7a1c6c05fd4563'; // Stable
+<script>
+    function remap(url) {
+        return (url.startsWith('src') ? '' : upstreamUrl) + url;
+    }
 
-        function remap(url) {
-            return (url.startsWith('src') ? '' : upstreamUrl) + url;
+    function query(url, do_remap = true) {
+        return query_internal(remap(url));
+    }
+
+    function query_internal(url) {
+        return new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest();
+            req.overrideMimeType('text/plain');
+            req.open('GET', url);
+            req.onload = () => resolve(req);
+            req.onerror = () => reject('Error requesting: ' + url);
+            req.send();
+        });
+    }
+
+    let upstreamUrl;
+
+    async function load() {
+        const params = new URLSearchParams(window.location.search);
+        let targetCommit = COMMIT;
+
+        let user = params.has('user') ? params.get('user') : USER;
+        let repo = params.has('repo') ? params.get('repo') : REPO;
+        let branch = params.has('branch') ? params.get('branch') : BRANCH;
+        let latest = true;//params.has('v') && params.get('v') == 'latest';
+
+        if (params.has('commit')) {
+            targetCommit = params.get('commit');
+            console.log('Using commit: ' + targetCommit);
+            document.title = document.title + ' commit: ' + targetCommit;
         }
-
-        function query(url, do_remap = true) {
-            return query_internal(remap(url));
-        }
-        function query_internal(url) {
-            return new Promise((resolve, reject) => {
-                let req = new XMLHttpRequest();
-                req.overrideMimeType('text/plain');
-                req.open('GET', url);
-                req.onload = () => resolve(req);
-                req.onerror = () => reject('Error requesting: ' + url);
-                req.send();
-            });
-        }
-
-        let upstreamUrl;
-
-        async function load() {
-            const params = new URLSearchParams(window.location.search);
-            let targetCommit = COMMIT;
-
-            let user = params.has('user') ? params.get('user') : USER;
-            let repo = params.has('repo') ? params.get('repo') : REPO;
-            let branch = params.has('branch') ? params.get('branch') : BRANCH;
-            let latest = true;//params.has('v') && params.get('v') == 'latest';
-        
-            if (params.has('commit')) {
-                targetCommit = params.get('commit');
-                console.log('Using commit: ' + targetCommit);
-		document.title = document.title + ' commit: ' + targetCommit;
-            } else if (params.has('user') || params.has('branch') || params.has('repo') || latest) {
-                // Query github API
-                let api_url = `https://api.github.com/repos/${user}/${repo}/commits/${branch}`;
-                try {
-                    let res = await query_internal(api_url);
-                    targetCommit = JSON.parse(res.responseText)['sha'];
-		    if (params.has('branch'))
-			document.title = document.title + ' - ' + branch;
-                    console.log(`Using latest commit from ${user}/${repo} on branch ${branch}: ${targetCommit}`);
-                } catch (e) {
-                    console.log(`Failed to query Github API. Send: ${api_url} Response: ${res}`);
-                }
+        else if (params.has('user') || params.has('branch') || params.has('repo') || latest) {
+            // Query github API
+            let api_url = `https://api.github.com/repos/${user}/${repo}/commits/${branch}`;
+            try {
+                let res = await query_internal(api_url);
+                targetCommit = JSON.parse(res.responseText)['sha'];
+                if (params.has('branch'))
+                    document.title = document.title + ' - ' + branch;
+                console.log(`Using latest commit from ${user}/${repo} on branch ${branch}: ${targetCommit}`);
+            } catch (e) {
+                console.log(`Failed to query Github API. Send: ${api_url} Response: ${res}`);
             }
-
-            upstreamUrl = `https://raw.githubusercontent.com/${user}/${repo}/${targetCommit}/BondageClub/`;
-
-            let index = await query('index.html');
-            let sourceScripts = index.responseText.split('\n')
-                .map(x => /<script src="([\w\d/._]+)"><\/script>/.exec(x))
-                .filter(x => x !== null)
-                .map(x => x[1])
-                .filter(x => !x.startsWith('Screens/Room/')); // Easy load time optimization
-            
-            sourceScripts.splice(sourceScripts.indexOf('Screens/Character/ItemColor/ItemColor.js'), 0, 'src/common-shim.js');
-            sourceScripts.push('src/index-shim.js', 'src/shim.js');
-
-            let styleSrc = await query('CSS/Styles.css');
-            let style = document.createElement('style');
-            style.innerHTML = styleSrc.responseText;
-            document.head.appendChild(style);
-
-            let sources = await Promise.all(sourceScripts.map(query));
-            sources.forEach(req => {
-                let script = document.createElement('script');
-                script.innerHTML = req.responseText;
-                document.body.appendChild(script);
-            });
-
-            init();
         }
 
-        Click = () => {};
-        TouchStart = () => {};
-        MouseMove = () => {};
-        LoseFocus = () => {};
+        upstreamUrl = `https://raw.githubusercontent.com/${user}/${repo}/${targetCommit}/BondageClub/`;
 
-        load().then(
-            _ => console.log('Loaded successfully'),
-            err => console.log(err)
-        );
+        let index = await query('index.html');
+        let sourceScripts = index.responseText.split('\n')
+            .map(x => /<script src="([\w\d/._]+)"><\/script>/.exec(x))
+            .filter(x => x !== null)
+            .map(x => x[1])
+            .filter(x => !x.startsWith('Screens/Room/')); // Easy load time optimization
 
-    </script>
+        sourceScripts.splice(sourceScripts.indexOf('Screens/Character/ItemColor/ItemColor.js'), 0, 'src/common-shim.js');
+        sourceScripts.push('src/index-shim.js', 'src/shim.js');
 
-    <canvas id="MainCanvas" Width="2000" Height="1000" onClick="Click(event);" onTouchStart="TouchStart(event);" onMouseMove="MouseMove(event);" onMouseLeave="LoseFocus(event);"></canvas>
+        let styleSrc = await query('CSS/Styles.css');
+        let style = document.createElement('style');
+        style.innerHTML = styleSrc.responseText;
+        document.head.appendChild(style);
+
+        let sources = await Promise.all(sourceScripts.map(query));
+        sources.forEach(req => {
+            let script = document.createElement('script');
+            script.innerHTML = req.responseText;
+            document.body.appendChild(script);
+        });
+
+        init();
+    }
+
+    Click = () => {};
+    TouchStart = () => {};
+    MouseMove = () => {};
+    LoseFocus = () => {};
+
+    load().then(
+        _ => console.log('Loaded successfully'),
+        err => console.log(err)
+    );
+
+</script>
+
+<canvas id="MainCanvas" Width="2000" Height="1000" onClick="Click(event);" onTouchStart="TouchStart(event);" onMouseMove="MouseMove(event);" onMouseLeave="LoseFocus(event);"></canvas>
 
 </body>
-	
+
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-536L7P8"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 </html>

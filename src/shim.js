@@ -1,5 +1,4 @@
 function init() {
-
     // index.html
     ServerURL = "foobar";
     CommonIsMobile = CommonDetectMobile();
