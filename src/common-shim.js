@@ -94,3 +94,7 @@ AudioPlayInstantSound = function(src, volume) {
         audio.play();
     }
 }
+/*
+CharacterNickname = function CharacterNickname(C) {
+	return "";
+}*/
